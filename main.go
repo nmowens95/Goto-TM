@@ -3,17 +3,19 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 	port := "8080"
-	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.Dir(".")))
-	corsMux := middlewareCors(mux)
+	router := chi.NewRouter()
+	router.Handle("/", http.FileServer(http.Dir(".")))
+	corsRouter := middlewareCors(router)
 
 	srv := &http.Server{
 		Addr:    ":" + port,
-		Handler: corsMux,
+		Handler: corsRouter,
 	}
 
 	log.Print("Listening...")
