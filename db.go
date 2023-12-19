@@ -2,30 +2,36 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var DB *sql.DB
 
-func openDB() error {
-	db, err := sql.Open("sqlite3", "./task.db")
-	if err != nil {
-		return err
-	}
+func openDB() {
+	var err error
 
+	db, err := sql.Open("sqlite3", "tasks.db")
+	if err != nil {
+		log.Fatal(err)
+	}
 	DB = db
-	return nil
 }
 
-func closeDB() error {
-	return DB.Close()
+func closeDB() {
+	DB.Close()
 }
 
-func setupDB() error {
-	_, err := DB.Exec()
+func setupDB() {
+	_, err := DB.Exec(`CREATE TABLE IF NOT EXISTS tasks (
+		ID INTEGER PRIMARY KEY AUTOINCREMENT,
+		Name TEXT,
+		Description TEXT,
+		Comment TEXT,
+		Status TEXT
+	)`)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-	return nil
 }
