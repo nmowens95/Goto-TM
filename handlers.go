@@ -27,7 +27,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 
 	// insert task into db
-	insert := "INSERT INTO tasks (Name, Description, Status) VALUES (?, ?, ?)"
+	insert := "INSERT INTO tasks (Name, Description, Comment, Status) VALUES (?, ?, ?)"
 	_, err := DB.Exec(insert, task.Name, task.Description, task.Comment, task.Status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -38,14 +38,38 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 
-// get all tasks
-func GetTasks(w http.ResponseWriter, r *http.Request) {
+// get individual task (by ID)
+func GetTask(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// get task by id
-func GetTask(w http.ResponseWriter, r *http.Request) {
+// get all tasks
+func GetTasks(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
 
+	rows, err := DB.Query("SELECT ID, Name, Description, Comment, Status FROM tasks")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer rows.Close()
+
+	var tasks []Task
+	for rows.Next() {
+		var task Task
+		err := rows.Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		tasks = append(tasks, task)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tasks)
 }
 
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
