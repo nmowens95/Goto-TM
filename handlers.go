@@ -1,9 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"sync"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Task struct {
@@ -40,7 +44,29 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 // get individual task (by ID)
 func GetTask(w http.ResponseWriter, r *http.Request) {
+	taskID := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(taskID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 
+	mu.Lock()
+	defer mu.Unlock()
+
+	var task Task
+	err = DB.QueryRow("SELECT ID, Name, Description, Comment, Status FROM tasks WHERE ID = ?", id).Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Task not found", http.StatusNotFound)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(task)
 }
 
 // get all tasks
