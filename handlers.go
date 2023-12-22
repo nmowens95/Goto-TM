@@ -103,5 +103,26 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	taskID := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(taskID)
+	if err != nil {
+		http.Error(w, "Task ID not found", http.StatusBadRequest)
+	}
 
+	mu.Lock()
+	defer mu.Unlock()
+
+	result, err := DB.Exec("DELETE FROM tasks WHERE ID = ?", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rowsAff, _ := result.RowsAffected()
+	if rowsAff == 0 {
+		http.Error(w, "Task not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
