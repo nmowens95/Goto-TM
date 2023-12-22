@@ -10,9 +10,6 @@ import (
 
 func main() {
 	openDB()
-	if DB == nil {
-		log.Fatal("DB is not initialized properly")
-	}
 
 	port := "8080"
 	router := chi.NewRouter()
