@@ -11,7 +11,6 @@ import (
 func main() {
 	openDB()
 
-	port := "8080"
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Handle("/", http.FileServer(http.Dir(".")))
@@ -21,8 +20,11 @@ func main() {
 	router.Put("/tasks/{id}", UpdateTask)
 	router.Delete("/tasks/{id}", DeleteTask)
 
+	apiRouter := chi.NewRouter()
+	router.Mount("/api", apiRouter)
+
 	srv := &http.Server{
-		Addr:    ":" + port,
+		Addr:    ":" + "8080",
 		Handler: router,
 	}
 
