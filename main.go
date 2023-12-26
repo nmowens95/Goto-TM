@@ -21,6 +21,7 @@ func main() {
 	router.Delete("/tasks/{id}", DeleteTask)
 
 	apiRouter := chi.NewRouter()
+	apiRouter.Post("/users", CreateUser)
 	router.Mount("/api", apiRouter)
 
 	srv := &http.Server{
