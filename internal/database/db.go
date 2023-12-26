@@ -9,10 +9,10 @@ import (
 
 var DB *sql.DB
 
-func openDB() {
+func OpenDB() {
 	var err error
 
-	db, err := sql.Open("sqlite3", "./internal/database/tasks.db")
+	db, err := sql.Open("sqlite3", "./tasks.db")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,10 +30,10 @@ func openDB() {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users {
-		ID INTERGER PRIMARY KEY AUTOINCREMENT,
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
+		ID INTERGER PRIMARY KEY,
 		Email TEXT
-	}`)
+	)`)
 	if err != nil {
 		log.Fatal(err)
 	}

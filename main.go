@@ -6,20 +6,24 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/nmowens95/Goto-TM/internal/database"
 )
 
 func main() {
-	openDB()
+	database.OpenDB()
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Handle("/", http.FileServer(http.Dir(".")))
+
+	// Tasks
 	router.Get("/tasks", GetTasks)
 	router.Get("/tasks/{id}", GetTask)
 	router.Post("/tasks", CreateTask)
 	router.Put("/tasks/{id}", UpdateTask)
 	router.Delete("/tasks/{id}", DeleteTask)
 
+	// Users
 	apiRouter := chi.NewRouter()
 	apiRouter.Post("/users", CreateUser)
 	router.Mount("/api", apiRouter)
@@ -29,7 +33,7 @@ func main() {
 		Handler: router,
 	}
 
-	defer DB.Close()
+	defer database.DB.Close()
 
 	log.Print("Listening...")
 	log.Fatal(srv.ListenAndServe())

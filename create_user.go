@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/nmowens95/Goto-TM/internal/database"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +16,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	addUser := "INSERT INTO user (Email) VALUES (?)"
-	result, err := DB.Exec(addUser, user.Email)
+	result, err := database.DB.Exec(addUser, user.Email)
 	if err != nil {
 		http.Error(w, "There was an issue adding this user", http.StatusInternalServerError)
 		return

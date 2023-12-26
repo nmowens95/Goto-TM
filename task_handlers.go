@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/nmowens95/Goto-TM/internal/database"
 )
 
 var mu sync.Mutex
@@ -23,9 +24,15 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
+	// Check if UserID is in request
+	if task.UserID == 0 {
+		http.Error(w, "Valid UserID is required", http.StatusBadRequest)
+		return
+	}
+
 	// insert task into db
 	insert := "INSERT INTO tasks (Name, Description, Comment, Status, UserID) VALUES (?, ?, ?, ?, ?)"
-	_, err := DB.Exec(insert, task.Name, task.Description, task.Comment, task.Status)
+	_, err := database.DB.Exec(insert, task.Name, task.Description, task.Comment, task.Status, task.UserID)
 	if err != nil {
 		http.Error(w, "Not able to insert task, something went wrong", http.StatusInternalServerError)
 		return
@@ -40,14 +47,14 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 	taskID := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(taskID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Can't seem to find that task", http.StatusBadRequest)
 	}
 
 	mu.Lock()
 	defer mu.Unlock()
 
 	var task Task
-	err = DB.QueryRow("SELECT ID, Name, Description, Comment, Status FROM tasks WHERE ID = ?", id).Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status, &task.UserID)
+	err = database.DB.QueryRow("SELECT ID, Name, Description, Comment, Status, UserID FROM tasks WHERE ID = ?", id).Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status, &task.UserID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Task not found", http.StatusNotFound)
@@ -67,9 +74,9 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	rows, err := DB.Query("SELECT ID, Name, Description, Comment, Status, UserID FROM tasks")
+	rows, err := database.DB.Query("SELECT ID, Name, Description, Comment, Status, UserID FROM tasks")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "No tasks found", http.StatusInternalServerError)
 		return
 	}
 
@@ -78,7 +85,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []Task
 	for rows.Next() {
 		var task Task
-		err := rows.Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status)
+		err := rows.Scan(&task.ID, &task.Name, &task.Description, &task.Comment, &task.Status, &task.UserID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -109,9 +116,9 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	result, err := DB.Exec("UPDATE tasks SET Name = ?, Description = ?, Comment = ?, Status = ? WHERE ID = ?", updatedTask.Name, updatedTask.Description, updatedTask.Comment, updatedTask.Status, id)
+	result, err := database.DB.Exec("UPDATE tasks SET Name = ?, Description = ?, Comment = ?, Status = ?, UserID = ? WHERE ID = ?", updatedTask.Name, updatedTask.Description, updatedTask.Comment, updatedTask.Status, updatedTask.UserID, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Unable to update this task", http.StatusInternalServerError)
 		return
 	}
 
@@ -136,7 +143,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	result, err := DB.Exec("DELETE FROM tasks WHERE ID = ?", id)
+	result, err := database.DB.Exec("DELETE FROM tasks WHERE ID = ?", id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
