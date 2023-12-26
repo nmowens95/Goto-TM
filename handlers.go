@@ -10,14 +10,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type Task struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Comment     string `json:"comment"`
-	Status      string `json:"status"`
-}
-
 var mu sync.Mutex
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
