@@ -22,8 +22,18 @@ func openDB() {
 		Name TEXT,
 		Description TEXT,
 		Comment Text,
-		Status TEXT
+		Status TEXT,
+		UserID INTEGER,
+		FOREIGN KEY (UserID) REFERENCES users(ID)
 	)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users {
+		ID INTERGER PRIMARY KEY AUTOINCREMENT,
+		Email TEXT
+	}`)
 	if err != nil {
 		log.Fatal(err)
 	}
