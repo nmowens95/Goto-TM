@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -12,7 +12,7 @@ var DB *sql.DB
 func openDB() {
 	var err error
 
-	db, err := sql.Open("sqlite3", "./tasks.db")
+	db, err := sql.Open("sqlite3", "./internal/database/tasks.db")
 	if err != nil {
 		log.Fatal(err)
 	}
