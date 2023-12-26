@@ -1,6 +1,7 @@
 package main
 
-type User struct {
-	ID    int    `json:"id"`
-	Email string `json:"email"`
+import "net/http"
+
+func handlerCreateUsers(w http.ResponseWriter, r *http.Request) {
+	// woking on setting up users first
 }
