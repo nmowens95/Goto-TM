@@ -67,7 +67,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	rows, err := DB.Query("SELECT ID, Name, Description, Comment, Status FROM tasks")
+	rows, err := DB.Query("SELECT ID, Name, Description, Comment, Status, UserID FROM tasks")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
