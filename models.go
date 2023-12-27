@@ -1,10 +1,5 @@
 package main
 
-type DBStructure struct {
-	Task  map[int]Task
-	Users map[int]User
-}
-
 type Task struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -15,6 +10,7 @@ type Task struct {
 }
 
 type User struct {
-	ID    int    `json:"id"`
-	Email string `json:"email"`
+	ID       int    `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"-"`
 }
