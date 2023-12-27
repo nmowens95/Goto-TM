@@ -15,8 +15,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	addUser := "INSERT INTO user (Email) VALUES (?)"
-	result, err := database.DB.Exec(addUser, user.Email)
+	addUser := "INSERT INTO user (Email, Password) VALUES (?, ?)"
+	result, err := database.DB.Exec(addUser, user.Email, user.Password)
 	if err != nil {
 		http.Error(w, "There was an issue adding this user", http.StatusInternalServerError)
 		return
