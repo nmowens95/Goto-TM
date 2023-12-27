@@ -32,7 +32,8 @@ func OpenDB() {
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (
 		ID INTERGER PRIMARY KEY,
-		Email TEXT
+		Email TEXT,
+		Password TEXT
 	)`)
 	if err != nil {
 		log.Fatal(err)
