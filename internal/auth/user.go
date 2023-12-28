@@ -5,7 +5,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUserWithPassword(username, email, password string) error {
+func CreateUserWithPassword(email, password string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -16,7 +16,7 @@ func CreateUserWithPassword(username, email, password string) error {
 	return err
 }
 
-func AuthenticateUser(username, email, password string) (bool, error) {
+func AuthenticateUser(email, password string) (bool, error) {
 	var hashedPassword string
 
 	err := database.DB.QueryRow("SELECT Password From users WHERE Email = ?", email).Scan(&hashedPassword)
