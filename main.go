@@ -17,15 +17,16 @@ func main() {
 	router.Handle("/", http.FileServer(http.Dir(".")))
 
 	// Tasks
-	router.Get("/tasks", GetTasks)
+	router.Get("/tasks", handlerGetTasks)
 	router.Get("/tasks/{id}", GetTask)
-	router.Post("/tasks", CreateTask)
-	router.Put("/tasks/{id}", UpdateTask)
-	router.Delete("/tasks/{id}", DeleteTask)
+	router.Post("/tasks", handlerCreateTask)
+	router.Put("/tasks/{id}", handlerUpdateTask)
+	router.Delete("/tasks/{id}", handlerDeleteTask)
 
 	// Users
 	apiRouter := chi.NewRouter()
-	apiRouter.Post("/users", CreateUser)
+	apiRouter.Post("/users", handlerCreateUser)
+	apiRouter.Post("/login", handlerUserLogin)
 	router.Mount("/api", apiRouter)
 
 	srv := &http.Server{

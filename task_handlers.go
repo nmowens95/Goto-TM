@@ -14,7 +14,7 @@ import (
 var mu sync.Mutex
 
 // Create a single task
-func CreateTask(w http.ResponseWriter, r *http.Request) {
+func handlerCreateTask(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -70,7 +70,7 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // get all tasks
-func GetTasks(w http.ResponseWriter, r *http.Request) {
+func handlerGetTasks(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -99,7 +99,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update a current task
-func UpdateTask(w http.ResponseWriter, r *http.Request) {
+func handlerUpdateTask(w http.ResponseWriter, r *http.Request) {
 	taskID := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(taskID)
 	if err != nil {
@@ -132,7 +132,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete a created task
-func DeleteTask(w http.ResponseWriter, r *http.Request) {
+func handlerDeleteTask(w http.ResponseWriter, r *http.Request) {
 	taskID := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(taskID)
 	if err != nil {

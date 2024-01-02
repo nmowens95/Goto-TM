@@ -7,7 +7,7 @@ import (
 	"github.com/nmowens95/Goto-TM/internal/database"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {

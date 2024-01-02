@@ -12,7 +12,7 @@ var DB *sql.DB
 func OpenDB() {
 	var err error
 
-	db, err := sql.Open("sqlite3", "./tasks.db")
+	db, err := sql.Open("sqlite3", "tasks.db")
 	if err != nil {
 		log.Fatal(err)
 	}
