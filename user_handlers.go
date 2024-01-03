@@ -8,6 +8,7 @@ import (
 )
 
 func handlerUserLogin(w http.ResponseWriter, r *http.Request) {
+	// would take input from HTML submited via POST requests
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
