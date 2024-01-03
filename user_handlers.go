@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/nmowens95/Goto-TM/internal/auth"
@@ -18,7 +19,9 @@ func handlerUserLogin(w http.ResponseWriter, r *http.Request) {
 
 	if authenticated {
 		// Respond with success or redirect
-		http.Redirect(w, r, "/dashboard", http.StatusFound)
+		w.WriteHeader(http.StatusOK)
+		response := map[string]string{"message": "User login successful!"}
+		json.NewEncoder(w).Encode(response)
 	} else {
 		// User authentication failed
 		http.Error(w, "Invalid Credentials", http.StatusUnauthorized)
@@ -35,5 +38,7 @@ func handlerUserSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/login", http.StatusFound)
+	w.WriteHeader(http.StatusCreated)
+	response := map[string]string{"message": "Signup Successful!"}
+	json.NewEncoder(w).Encode(response)
 }
