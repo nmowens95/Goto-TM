@@ -25,6 +25,7 @@ func main() {
 
 	// Users
 	apiRouter := chi.NewRouter()
+	apiRouter.Put("/signup", handlerUserSignup)
 	apiRouter.Post("/users", handlerCreateUser)
 	apiRouter.Post("/login", handlerUserLogin)
 	router.Mount("/api", apiRouter)
@@ -36,6 +37,6 @@ func main() {
 
 	defer database.DB.Close()
 
-	log.Print("Listening...")
+	log.Printf("Listening on port :%v", srv.Addr)
 	log.Fatal(srv.ListenAndServe())
 }
