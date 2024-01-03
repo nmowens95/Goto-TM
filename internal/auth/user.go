@@ -5,15 +5,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUserWithPassword(email, password string) error {
+func CreateUserWithPassword(username, email, password string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return string(hashedPassword), err
 	}
 
 	// store hashed password in db
 	_, err = database.DB.Exec("INSERT INTO users (Email, Password) Values (?, ?)", email, hashedPassword)
-	return err
+	return "Error storing password", err
 }
 
 func AuthenticateUser(email, password string) (bool, error) {
