@@ -3,14 +3,23 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 	"github.com/nmowens95/Goto-TM/internal/database"
 )
 
 func main() {
 	database.OpenDB()
+
+	godotenv.Load(".env")
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environmental variable is not set")
+	}
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
