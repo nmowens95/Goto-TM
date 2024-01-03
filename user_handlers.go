@@ -19,6 +19,13 @@ func handlerUserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if authenticated {
+		// Generate a JWT upon successful auth
+		token, err := auth.CreateJWT(userID, email, tokenSecret)
+		if err != nil {
+			http.Error(w, "Error generating token", http.StatusInternalServerError)
+			return
+		}
+
 		// Respond with success or redirect
 		w.WriteHeader(http.StatusOK)
 		response := map[string]string{"message": "User login successful!"}
